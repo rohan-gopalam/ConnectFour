@@ -1,10 +1,13 @@
 from checkWin import checkwin
 
 
-def minimax(arr, isMax, depth):
+def minimax(arr, isMax, depth, moves):
     bestScore = 0
+    bestMoves = depth + 1
     scoreVal = {"X": -1, "O": 1, "no one": 0}
     d = depth - 1
+    m = moves
+    m += 1
     if d > 0:
         vals = checkwin(arr)
         win = vals[1]
@@ -16,12 +19,14 @@ def minimax(arr, isMax, depth):
                 bestScore = -2
                 if bestScore <= score:
                     bestScore = score
+                    bestMoves = 0
 
             else:
                 score = scoreVal.get(winner)
                 bestScore = 2
                 if bestScore >= score:
                     bestScore = score
+                    bestMoves = 0
 
         if not win:
             if isMax:
@@ -31,11 +36,23 @@ def minimax(arr, isMax, depth):
                     for k in range(6):
                         if arr[5 - k][col] == " " and place is False:
                             arr[5 - k][col] = "O"
-                            findNextBest = minimax(arr, False, d)
+                            m = moves + 1
+                            findNextBest = minimax(arr, False, d, m)
                             arr[5 - k][col] = " "
                             place = True
-                            if findNextBest > bestScore:
-                                bestScore = findNextBest
+                            if findNextBest[0] > bestScore:
+                                bestScore = findNextBest[0]
+                                bestMoves = findNextBest[1]
+                            elif findNextBest[0] == bestScore:
+                                if findNextBest[1] > bestMoves and bestScore == -1:
+                                    bestScore = findNextBest[0]
+                                    bestMoves = findNextBest[1]
+                                    bestMove = col
+                                elif findNextBest[1] < bestMoves and bestScore == 1:
+                                    bestScore = findNextBest[0]
+                                    bestMoves = findNextBest[1]
+
+
                     place = False
 
             else:
@@ -45,11 +62,21 @@ def minimax(arr, isMax, depth):
                     for k in range(6):
                         if arr[5 - k][col] == " " and place is False:
                             arr[5 - k][col] = "X"
-                            findNextBest = minimax(arr, True, d)
+                            m = moves + 1
+                            findNextBest = minimax(arr, True, d, m)
                             arr[5 - k][col] = " "
                             place = True
-                            if findNextBest < bestScore:
-                                bestScore = findNextBest
+                            if findNextBest[0] < bestScore:
+                                bestScore = findNextBest[0]
+                                bestMoves = findNextBest[1]
+                            elif findNextBest[0] == bestScore:
+                                if findNextBest[1] > bestMoves and bestScore == 1:
+                                    bestScore = findNextBest[0]
+                                    bestMoves = findNextBest[1]
+                                    bestMove = col
+                                elif findNextBest[1] < bestMoves and bestScore == -1:
+                                    bestScore = findNextBest[0]
+                                    bestMoves = findNextBest[1]
                     place = False
 
-    return bestScore
+    return bestScore, bestMoves + 1
