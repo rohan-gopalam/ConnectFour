@@ -13,7 +13,7 @@ def aimove(p, depth):
         for k in range(6):
             if scenario[5 - k][col] == " " and place is False:
                 scenario[5 - k][col] = "O"
-                findNextBest = minimax(scenario, False, d, 0)
+                findNextBest = minimax(scenario, False, d)
                 scenario[5-k][col] = " "
                 place = True
                 if findNextBest[0] > bestScore:
